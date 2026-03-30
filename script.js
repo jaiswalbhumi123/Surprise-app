@@ -713,18 +713,16 @@ function setupGlobalEvents() {
             card.classList.add('active');
             
             const url = card.dataset.url;
+            const name = card.querySelector('span').innerText;
             APP_STATE.config.musicUrl = url;
             
             // Preview it
             previewAudio.src = url;
-            previewAudio.play().catch(() => {});
-            document.getElementById('music-playing-indicator').classList.remove('hidden');
-            setTimeout(() => {
-                if(!previewAudio.paused) {
-                    previewAudio.pause();
-                    document.getElementById('music-playing-indicator').classList.add('hidden');
-                }
-            }, 15000); // 15 sec preview
+            previewAudio.play().catch(err => console.error("Music preview failed:", err));
+            
+            const indicator = document.getElementById('music-playing-indicator');
+            indicator.classList.remove('hidden');
+            indicator.innerHTML = `<i class="fas fa-play-circle fa-spin"></i> Now Playing: <b>${name}</b>`;
             
             saveCurrentStepData();
         };

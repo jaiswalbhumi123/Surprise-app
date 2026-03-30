@@ -1700,31 +1700,53 @@ body {
     z-index: 10;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 768px) {
     .side-photos {
         position: relative;
         width: 100%;
         top: 0;
-        flex-direction: row;
-        justify-content: center;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-top: 15px;
-        margin-bottom: 20px;
-    }
-
-    .left-photos,
-    .right-photos {
         left: 0;
         right: 0;
-        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 0 10px;
     }
 
     .final-polaroid {
-        width: 180px;
+        width: 45%;
+        margin: 0;
     }
 
     .final-polaroid img {
-        height: 120px;
+        height: 110px;
+    }
+    
+    .balloon-item {
+        width: 30px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    #final-balloons-container {
+        margin-bottom: 15px;
+    }
+
+    .massive-text {
+        font-size: 1.8rem !important;
+        line-height: 1.2;
+    }
+
+    .pixel-cake {
+        transform: scale(0.65);
+        margin: 10px auto 20px auto !important;
+        float: none;
+    }
+    
+    .final-card-content {
+        padding-top: 15px !important;
     }
 }
