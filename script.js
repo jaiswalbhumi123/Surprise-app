@@ -714,20 +714,28 @@ function setupGlobalEvents() {
     
     musicCards.forEach(card => {
         card.onclick = () => {
-            musicCards.forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-            
             const url = card.dataset.url;
             const name = card.querySelector('span').innerText;
+            const indicator = document.getElementById('music-playing-indicator');
+            
+            // If same card clicked and playing -> PAUSE
+            if (previewAudio.src === url && !previewAudio.paused) {
+                previewAudio.pause();
+                indicator.innerHTML = `<i class="fas fa-pause-circle"></i> Paused: <b>${name}</b>`;
+                return;
+            }
+
+            // Select it (Red border)
+            musicCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
             APP_STATE.config.musicUrl = url;
             
-            // Preview it
+            // Play it
             previewAudio.src = url;
             previewAudio.play().catch(err => console.error("Music preview failed:", err));
             
-            const indicator = document.getElementById('music-playing-indicator');
             indicator.classList.remove('hidden');
-            indicator.innerHTML = `<i class="fas fa-play-circle fa-spin"></i> Now Playing: <b>${name}</b> <br> <span class="text-xs text-primary">(Song Selected! ✅)</span>`;
+            indicator.innerHTML = `<i class="fas fa-volume-up fa-beat text-primary"></i> Playing: <b>${name}</b> <br> <span class="text-xs text-primary">(Song Selected! ✅)</span>`;
             
             saveCurrentStepData();
         };
