@@ -733,10 +733,10 @@ function setupGlobalEvents() {
         const reader = new FileReader();
         reader.onload = (ev) => {
             APP_STATE.config.musicUrl = ev.target.result;
-            musicCards.forEach(c => c.classList.remove('active')); // Deselect library
+            musicCards.forEach(c => c.classList.remove('active')); 
             
             previewAudio.src = ev.target.result;
-            previewAudio.play().catch(() => {});
+            previewAudio.play().catch(err => console.error("Music preview failed:", err));
             document.getElementById('music-playing-indicator').classList.remove('hidden');
             document.getElementById('music-playing-indicator').innerHTML = '<i class="fas fa-check-circle text-success"></i> Custom Song Loaded!';
             
@@ -758,27 +758,36 @@ function setupGlobalEvents() {
         reader.readAsDataURL(e.target.files[0]);
     };
 
-    // AUDIO: Live Recording
+    // AUDIO: Live Recording (Improved Stability)
     let mediaRecorder;
     let audioChunks = [];
-    document.getElementById('rec-btn').onclick = async () => {
-        const btn = document.getElementById('rec-btn');
+    document.getElementById('rec-btn').onclick = async function() {
+        const btn = this;
         const indicator = document.getElementById('music-playing-indicator');
 
         if (mediaRecorder && mediaRecorder.state === 'recording') {
             mediaRecorder.stop();
             btn.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
+            btn.classList.remove('pulse-btn');
             return;
         }
         
         try {
-            // PAUSE MUSIC during recording
-            if(!previewAudio.paused) previewAudio.pause();
+            // STOP setup music if playing
+            if(!previewAudio.paused) {
+                previewAudio.pause();
+                previewAudio.currentTime = 0;
+            }
             if(indicator) indicator.classList.add('hidden');
 
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            
+            audioChunks = [];
+            mediaRecorder.ondataavailable = e => {
+                if(e.data.size > 0) audioChunks.push(e.data);
+            };
+            
             mediaRecorder.onstop = () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 const reader = new FileReader();
@@ -789,12 +798,14 @@ function setupGlobalEvents() {
                     document.getElementById('voice-preview').innerHTML = '<i class="fas fa-check-circle text-success"></i> Voice Note Recorded!';
                     saveCurrentStepData();
                 };
-                audioChunks = [];
             };
+
             mediaRecorder.start();
             btn.innerHTML = '<i class="fas fa-stop-circle"></i> Stop Recording...';
+            btn.classList.add('pulse-btn');
         } catch (err) {
-            alert('Microphone access denied. Please allow mic usage or upload a file.');
+            console.error("Recording error:", err);
+            alert('Could not start recording. Please make sure to ALLOW microphone access when the browser asks.');
         }
     };
 
