@@ -119,12 +119,22 @@ body {
 /* 🎮 GAME POPUPS & SETUP */
 .memory-setup-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
 .memory-slot { 
-    background: white; border-radius: 18px; padding: 12px; display: flex; gap: 15px; align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    background: white; border-radius: 18px; padding: 15px; display: flex; gap: 15px; align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); margin-bottom: 5px;
 }
-.slot-photo { width: 60px; height: 60px; border-radius: 12px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
+.slot-photo { 
+    width: 80px; height: 80px; min-width: 80px; border-radius: 12px; 
+    background: #fdf2f4; border: 2px dashed var(--primary-light);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    overflow: hidden; position: relative; cursor: pointer; transition: 0.3s;
+}
+.slot-photo:hover { background: #fff0f3; border-color: var(--primary); }
+.slot-photo i { font-size: 1.5rem; color: var(--primary); opacity: 0.7; }
+.slot-photo span { font-size: 0.6rem; margin-top: 4px; color: var(--primary); font-weight: bold; }
 .slot-photo img { width: 100%; height: 100%; object-fit: cover; }
-.slot-note { flex: 1; border: none; font-family: inherit; font-size: 0.9rem; outline: none; }
+.slot-note { flex: 1; border: 1px solid #eee; padding: 10px; border-radius: 10px; font-family: inherit; font-size: 0.9rem; outline: none; background: #fafafa; }
+.slot-note:focus { background: white; border-color: var(--primary-light); }
+.hidden-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
 
 .game-stage { width: 100%; height: 350px; background: rgba(0,0,0,0.03); border-radius: 32px; position: relative; overflow: hidden; border: 2px dashed #ddd; }
 .heart-obj { position: absolute; font-size: 2.2rem; cursor: pointer; user-select: none; transition: 0.1s; animation: pulse 0.8s infinite alternate; }

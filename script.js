@@ -1,5 +1,5 @@
 /**
- * 🎨 DIGITAL SURPRISE CREATOR: ADVANCED ENGINE (CLOUD SYNC)
+ * 🎨 DIGITAL SURPRISE CREATOR: ADVANCED ENGINE (CLOUD SYNC) V4
  */
 
 // ☁️ FIREBASE CONFIGURATION (Realtime Database)
@@ -308,9 +308,13 @@ function renderMemorySetup() {
             <label class="slot-photo" for="mem-file-${idx}">
                 <i class="fas fa-camera ${mem.img ? 'hidden' : ''}" id="icon-mem-${idx}"></i>
                 <img id="prev-mem-${idx}" src="${mem.img || ''}" class="${mem.img ? '' : 'hidden'}">
+                <span id="label-mem-${idx}" class="${mem.img ? 'hidden' : ''}">Add Photo</span>
             </label>
-            <input type="file" id="mem-file-${idx}" accept="image/*" class="hidden">
-            <input type="text" class="slot-note" value="${mem.note}" placeholder="Note..." id="note-mem-${idx}">
+            <input type="file" id="mem-file-${idx}" accept="image/*" class="hidden-input">
+            <div class="flex-column w-100">
+                <span class="text-xs text-primary font-bold mb-1">Memory Note #${idx+1}</span>
+                <input type="text" class="slot-note" value="${mem.note}" placeholder="e.g. Our First Date" id="note-mem-${idx}">
+            </div>
         `;
         list.appendChild(slot);
         
@@ -323,10 +327,12 @@ function renderMemorySetup() {
                     
                     const imgEl = document.getElementById(`prev-mem-${idx}`);
                     const iconEl = document.getElementById(`icon-mem-${idx}`);
+                    const labelEl = document.getElementById(`label-mem-${idx}`);
                     
                     imgEl.src = compressedData;
                     imgEl.classList.remove('hidden');
                     iconEl.classList.add('hidden');
+                    if(labelEl) labelEl.classList.add('hidden');
                     
                     saveCurrentStepData(); 
                 });
