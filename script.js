@@ -724,7 +724,7 @@ function setupGlobalEvents() {
                     previewAudio.pause();
                     document.getElementById('music-playing-indicator').classList.add('hidden');
                 }
-            }, 5000); // 5 sec preview
+            }, 15000); // 15 sec preview
             
             saveCurrentStepData();
         };
