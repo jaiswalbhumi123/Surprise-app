@@ -704,6 +704,8 @@ function setupGlobalEvents() {
     // 🎵 BACKGROUND MUSIC: Library & Upload
     const musicCards = document.querySelectorAll('.music-card');
     const previewAudio = new Audio();
+    previewAudio.crossOrigin = "anonymous"; // Fix for cross-domain mobile blocks
+
     
     musicCards.forEach(card => {
         card.onclick = () => {
