@@ -262,6 +262,13 @@ document.getElementById('finish-creator-btn').onclick = () => {
 };
 
 function onScreenShow(screenId) {
+    if (screenId === 'setup-music') {
+        const cds = document.querySelectorAll('.music-card');
+        cds.forEach(c => {
+            if(c.dataset.url === APP_STATE.config.musicUrl) c.classList.add('active');
+            else c.classList.remove('active');
+        });
+    }
     if (screenId === 'setup-game') renderMemorySetup();
     if (screenId === 'setup-final') renderFinalPhotosPreview();
     if (screenId === 'countdown') startRecipientTimer();
@@ -683,18 +690,55 @@ function setupGlobalEvents() {
     document.querySelectorAll('.next-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.next));
     document.querySelectorAll('.prev-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.prev));
     
-    // AUDIO: File Upload
-    document.getElementById('upload-voice').onchange = (e) => {
+        reader.readAsDataURL(e.target.files[0]);
+    };
+    
+    // 🎵 BACKGROUND MUSIC: Library & Upload
+    const musicCards = document.querySelectorAll('.music-card');
+    const previewAudio = new Audio();
+    
+    musicCards.forEach(card => {
+        card.onclick = () => {
+            musicCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            const url = card.dataset.url;
+            APP_STATE.config.musicUrl = url;
+            
+            // Preview it
+            previewAudio.src = url;
+            previewAudio.play().catch(() => {});
+            document.getElementById('music-playing-indicator').classList.remove('hidden');
+            setTimeout(() => {
+                if(!previewAudio.paused) {
+                    previewAudio.pause();
+                    document.getElementById('music-playing-indicator').classList.add('hidden');
+                }
+            }, 5000); // 5 sec preview
+            
+            saveCurrentStepData();
+        };
+    });
+
+    document.getElementById('upload-music').onchange = (e) => {
         if (!e.target.files[0]) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-            APP_STATE.config.voice = ev.target.result;
-            document.getElementById('voice-preview').classList.remove('hidden');
-            document.getElementById('voice-preview').innerHTML = '<i class="fas fa-check-circle text-success"></i> Audio File Saved!';
+            APP_STATE.config.musicUrl = ev.target.result;
+            musicCards.forEach(c => c.classList.remove('active')); // Deselect library
+            
+            previewAudio.src = ev.target.result;
+            previewAudio.play().catch(() => {});
+            document.getElementById('music-playing-indicator').classList.remove('hidden');
+            document.getElementById('music-playing-indicator').innerHTML = '<i class="fas fa-check-circle text-success"></i> Custom Song Loaded!';
+            
             saveCurrentStepData();
         };
         reader.readAsDataURL(e.target.files[0]);
     };
+
+    // AUDIO: File Upload (Voice Note)
+    document.getElementById('upload-voice').onchange = (e) => {
 
     // AUDIO: Live Recording
     let mediaRecorder;

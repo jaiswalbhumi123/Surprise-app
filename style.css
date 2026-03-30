@@ -116,6 +116,18 @@ body {
 .category-card i { font-size: 1.8rem; color: var(--primary); }
 .category-card.selected { border-color: var(--primary); background: #fff8f9; transform: scale(1.05); }
 
+/* 🎵 MUSIC SELECT UI */
+.music-library-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+.music-card { 
+    background: white; border-radius: 18px; padding: 15px 5px; cursor: pointer; 
+    border: 2px solid transparent; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 5px;
+}
+.music-card i { font-size: 1.2rem; color: var(--primary); }
+.music-card span { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
+.music-card.active { border-color: var(--primary); background: #fff0f3; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 141, 161, 0.2); }
+.music-card.active i { color: var(--primary-dark); }
+.music-card.active span { color: var(--primary-dark); }
+
 /* 🎮 GAME POPUPS & SETUP */
 .memory-setup-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
 .memory-slot { 

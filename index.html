@@ -7,7 +7,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Dancing+Script:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=777777777">
+    <link rel="stylesheet" href="style.css?v=888888888">
 </head>
 <body class="app-mode">
 
@@ -62,9 +62,32 @@
     </section>
 
     <!-- 🛠️ CREATOR FLOW (WIZARD) -->
-    <section id="setup-time-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-4 text-3xl">Set the Magical Time ⏳</h2><p class="text-sm mb-4">When should the surprise unlock?</p><div class="input-group mb-4"><input type="datetime-local" id="setup-target-date" class="glass-input w-100"></div><div class="category-grid" style="grid-template-columns: 1fr;"><div class="category-card selected" data-type="general" style="width: 100%;"><i class="fas fa-star" style="color: #ffca28;"></i><span style="font-weight: 800;">Special Celebration ✨</span><p class="text-xs text-muted">(Perfect for Birthdays, Anniversaries, or Any Special Day!)</p></div></div><button class="glow-btn next-setup-btn mt-5 w-100" data-next="setup-letter">Continue to Letter ➡️</button></div></section>
+    <section id="setup-time-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-4 text-3xl">Set the Magical Time ⏳</h2><p class="text-sm mb-4">When should the surprise unlock?</p><div class="input-group mb-4"><input type="datetime-local" id="setup-target-date" class="glass-input w-100"></div><div class="category-grid" style="grid-template-columns: 1fr;"><div class="category-card selected" data-type="general" style="width: 100%;"><i class="fas fa-star" style="color: #ffca28;"></i><span style="font-weight: 800;">Special Celebration ✨</span><p class="text-xs text-muted">(Perfect for Birthdays, Anniversaries, or Any Special Day!)</p></div></div><button class="glow-btn next-setup-btn mt-5 w-100" data-next="setup-music">Next: Choose Music 🎵</button></div></section>
 
-    <section id="setup-letter-screen" class="screen hidden full-page"><div class="glass-panel wide-panel"><h2 class="section-title text-center mb-4 text-3xl">Write Your Message 📜</h2><div class="editor-area"><input type="text" id="setup-letter-to" placeholder="To My Love," class="glass-input w-100 mb-2 font-bold handwriting"><textarea id="setup-letter-body" class="glass-input w-100 handwriting" rows="10" placeholder="Write your heartfelt message here..."></textarea></div><div class="flex-between mt-4"><button class="nav-btn prev-setup-btn" data-prev="setup-time">Back</button><button class="glow-btn next-setup-btn" data-next="setup-voice">Next: Add Voice Note 🎤</button></div></div></section>
+    <section id="setup-music-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-3 text-3xl">Magical Music 🎵</h2><p class="text-sm mb-4">Choose a background song for the surprise!</p>
+        <div class="music-library-grid mb-4">
+            <div class="music-card active" data-url="https://cdn.pixabay.com/download/audio/2022/11/22/audio_7acb8bbab2.mp3">
+                <i class="fas fa-music"></i> <span>Birthday Jazz</span>
+            </div>
+            <div class="music-card" data-url="https://cdn.pixabay.com/download/audio/2022/01/18/audio_82c61e8608.mp3">
+                <i class="fas fa-guitar"></i> <span>Romantic Guitar</span>
+            </div>
+            <div class="music-card" data-url="https://cdn.pixabay.com/download/audio/2022/02/07/audio_d1c1a938fc.mp3">
+                <i class="fas fa-sun"></i> <span>Happy Pop</span>
+            </div>
+        </div>
+        <p class="text-xs mb-3">... OR UPLOAD YOUR OWN SONG ...</p>
+        <label for="upload-music" class="glass-btn w-100 d-block mb-2" style="cursor:pointer;"><i class="fas fa-cloud-upload-alt"></i> Upload Custom MP3</label>
+        <input type="file" id="upload-music" accept="audio/*" class="hidden-input">
+        <div id="music-playing-indicator" class="text-xs text-success font-bold mt-2 hidden"><i class="fas fa-play-circle fa-spin"></i> Preview Playing...</div>
+
+        <div class="flex-between mt-5">
+            <button class="nav-btn prev-setup-btn" data-prev="setup-time">Back</button>
+            <button class="glow-btn next-setup-btn" data-next="setup-letter">Next: Write Message ✍️</button>
+        </div>
+    </div></section>
+
+    <section id="setup-letter-screen" class="screen hidden full-page"><div class="glass-panel wide-panel"><h2 class="section-title text-center mb-4 text-3xl">Write Your Message 📜</h2><div class="editor-area"><input type="text" id="setup-letter-to" placeholder="To My Love," class="glass-input w-100 mb-2 font-bold handwriting"><textarea id="setup-letter-body" class="glass-input w-100 handwriting" rows="10" placeholder="Write your heartfelt message here..."></textarea></div><div class="flex-between mt-4"><button class="nav-btn prev-setup-btn" data-prev="setup-music">Back</button><button class="glow-btn next-setup-btn" data-next="setup-voice">Next: Add Voice Note 🎤</button></div></div></section>
 
     <section id="setup-voice-screen" class="screen hidden full-page"><div class="glass-panel text-center"><h2 class="section-title mb-4 text-3xl">Record or Upload Voice 🎙️</h2><div class="voice-setup-box flex-column gap-3"><button id="rec-btn" class="glow-btn large-btn pulse-btn mb-3"><i class="fas fa-microphone"></i> Start Recording</button><p>OR</p><label for="upload-voice" class="glass-btn mt-3 w-100"><i class="fas fa-upload"></i> Upload Audio File</label><input type="file" id="upload-voice" accept="audio/*" hidden></div><div id="voice-preview" class="hidden mt-4 glass-panel-inner"><i class="fas fa-volume-up text-success"></i> Voice Saved!</div><div class="flex-between mt-5"><button class="nav-btn prev-setup-btn" data-prev="setup-letter">Back</button><button class="glow-btn next-setup-btn" data-next="setup-game">Next: Game Memories 💖</button></div></div></section>
 
@@ -289,6 +312,6 @@
     <!-- Libs -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="script.js?v=777777777"></script>
+    <script src="script.js?v=888888888"></script>
 </body>
 </html>
