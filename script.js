@@ -166,33 +166,38 @@ async function saveToCloud() {
     const modal = document.getElementById('cloud-modal');
     const msg = document.getElementById('cloud-msg');
     modal.classList.remove('hidden');
-    msg.innerText = "Syncing your memories to Cloud...";
+    msg.innerText = "Syncing memories to Cloud... ☁️";
     
-    // Add a 5 second timeout to prevent hanging
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000));
+    // Check if we have a large custom song (base64)
+    const isLarge = APP_STATE.config.musicUrl && APP_STATE.config.musicUrl.startsWith('data:');
+    const timeoutDuration = isLarge ? 45000 : 10000; // 45s for large, 10s for small
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), timeoutDuration));
+    
+    if (isLarge) {
+        setTimeout(() => {
+            msg.innerHTML = "Large MP3 detected! 🎵<br>Uploading your song, please wait...";
+        }, 3000);
+    }
     
     try {
-        if (!db) throw new Error("Backend not initialized");
+        if (!db) throw new Error("Offline");
         
-        // Use Realtime Database instead of Firestore
         const newRef = db.ref("surprises").push();
         const uploadTask = newRef.set(APP_STATE.config);
         
-        // Race the cloud upload against a 5s timeout
         await Promise.race([uploadTask, timeout]);
         const uniqueId = newRef.key;
-        msg.innerText = "Success! Surprise saved in cloud! 🎉";
         
-        // When Done, show the definitive "Sharing Dashboard"
+        msg.innerHTML = "Success! Saved Forever! 🎉";
         setTimeout(() => {
             modal.classList.add('hidden');
             generateQR(uniqueId);
             navigateTo('sharing');
-        }, 1500);
+        }, 1200);
         
     } catch(e) {
-        msg.innerHTML = "✨ Generating Magic Link...";
-        
+        console.error("Cloud Sync Error:", e);
+        msg.innerHTML = "Saving locally... ✨";
         setTimeout(() => {
             modal.classList.add('hidden');
             generateQR("local_shared");
@@ -722,7 +727,7 @@ function setupGlobalEvents() {
             
             const indicator = document.getElementById('music-playing-indicator');
             indicator.classList.remove('hidden');
-            indicator.innerHTML = `<i class="fas fa-play-circle fa-spin"></i> Now Playing: <b>${name}</b>`;
+            indicator.innerHTML = `<i class="fas fa-play-circle fa-spin"></i> Now Playing: <b>${name}</b> <br> <span class="text-xs text-primary">(Song Selected! ✅)</span>`;
             
             saveCurrentStepData();
         };
@@ -737,8 +742,10 @@ function setupGlobalEvents() {
             
             previewAudio.src = ev.target.result;
             previewAudio.play().catch(err => console.error("Music preview failed:", err));
-            document.getElementById('music-playing-indicator').classList.remove('hidden');
-            document.getElementById('music-playing-indicator').innerHTML = '<i class="fas fa-check-circle text-success"></i> Custom Song Loaded!';
+            
+            const indicator = document.getElementById('music-playing-indicator');
+            indicator.classList.remove('hidden');
+            indicator.innerHTML = '<i class="fas fa-check-circle text-success font-bold"></i> Custom Song Ready! <br><span class="text-muted">(Note: Saving might take a moment due to file size)</span>';
             
             saveCurrentStepData();
         };
