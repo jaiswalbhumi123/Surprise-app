@@ -418,7 +418,9 @@ function updateTimer() {
 document.getElementById('create-mode-btn').onclick = () => navigateTo('auth');
 document.getElementById('view-mode-btn').onclick = () => startRecipientFlow();
 document.getElementById('unlock-btn').onclick = () => {
-    document.getElementById('bg-music').play().catch(() => {});
+    const bgMusic = document.getElementById('bg-music');
+    bgMusic.play().catch(() => {});
+    
     navigateTo('letter');
     document.getElementById('view-letter-to').innerText = APP_STATE.config.letter.to + ',';
     
@@ -443,8 +445,17 @@ document.getElementById('unlock-btn').onclick = () => {
     
     // Play Custom Voice Note
     if (APP_STATE.config.voice) {
+        // Pause/Lower background music for voice note
+        bgMusic.volume = 0.2; 
+        
         const voiceAudio = new Audio(APP_STATE.config.voice);
-        voiceAudio.play().catch(() => {});
+        voiceAudio.play().catch(() => {
+            bgMusic.volume = 1.0; // Restore if voice fails
+        });
+        
+        voiceAudio.onended = () => {
+            bgMusic.volume = 1.0; // Restore music volume
+        };
     }
 };
 document.getElementById('letter-next-btn').onclick = () => navigateTo('game');
@@ -690,9 +701,6 @@ function setupGlobalEvents() {
     document.querySelectorAll('.next-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.next));
     document.querySelectorAll('.prev-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.prev));
     
-        reader.readAsDataURL(e.target.files[0]);
-    };
-    
     // 🎵 BACKGROUND MUSIC: Library & Upload
     const musicCards = document.querySelectorAll('.music-card');
     const previewAudio = new Audio();
@@ -739,12 +747,24 @@ function setupGlobalEvents() {
 
     // AUDIO: File Upload (Voice Note)
     document.getElementById('upload-voice').onchange = (e) => {
+        if (!e.target.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            APP_STATE.config.voice = ev.target.result;
+            document.getElementById('voice-preview').classList.remove('hidden');
+            document.getElementById('voice-preview').innerHTML = '<i class="fas fa-check-circle text-success"></i> Audio File Saved!';
+            saveCurrentStepData();
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    };
 
     // AUDIO: Live Recording
     let mediaRecorder;
     let audioChunks = [];
     document.getElementById('rec-btn').onclick = async () => {
         const btn = document.getElementById('rec-btn');
+        const indicator = document.getElementById('music-playing-indicator');
+
         if (mediaRecorder && mediaRecorder.state === 'recording') {
             mediaRecorder.stop();
             btn.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
@@ -752,6 +772,10 @@ function setupGlobalEvents() {
         }
         
         try {
+            // PAUSE MUSIC during recording
+            if(!previewAudio.paused) previewAudio.pause();
+            if(indicator) indicator.classList.add('hidden');
+
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
