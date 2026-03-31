@@ -244,15 +244,36 @@ function generateQR(id) {
     const qrDiv = document.getElementById('qrcode-container');
     qrDiv.innerHTML = '';
     
-    // Clear previous QR
-    new QRCode(qrDiv, { text: shareUrl, width: 156, height: 156 });
+    // Create high-quality QR code
+    new QRCode(qrDiv, { 
+        text: shareUrl, 
+        width: 200, 
+        height: 200,
+        correctLevel: QRCode.CorrectLevel.H 
+    });
     
     document.getElementById('copy-link-btn').onclick = () => {
         navigator.clipboard.writeText(shareUrl);
-        alert("Magical Link copied! 💓 Send this to your special someone!");
+        const btn = document.getElementById('copy-link-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Copy Link', 2000);
     };
+
+    // Add download logic if user wants to save QR as image
+    const downloadBtn = document.createElement('button');
+    downloadBtn.className = "btn-secondary text-xs mt-2";
+    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Save QR';
+    downloadBtn.onclick = () => {
+        const img = qrDiv.querySelector('img');
+        if (img) {
+            const link = document.createElement('a');
+            link.download = 'surprise-qr.png';
+            link.href = img.src;
+            link.click();
+        }
+    };
+    qrDiv.appendChild(downloadBtn);
     
-    // Link "Preview" to explicitly start from the 1st stage (Countdown)
     document.getElementById('preview-final-btn').onclick = () => {
         startRecipientFlow();
     };
