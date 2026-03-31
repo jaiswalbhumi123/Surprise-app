@@ -242,38 +242,35 @@ async function loadFromCloud(id) {
 function generateQR(id) {
     const shareUrl = window.location.origin + window.location.pathname + "?id=" + id;
     const qrDiv = document.getElementById('qrcode-container');
-    qrDiv.innerHTML = '';
     
-    // Create high-quality QR code
-    new QRCode(qrDiv, { 
-        text: shareUrl, 
-        width: 200, 
-        height: 200,
-        correctLevel: QRCode.CorrectLevel.H 
-    });
+    // Use Google Chart API for guaranteed fresh and high-quality QR
+    const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(shareUrl)}&choe=UTF-8`;
     
+    qrDiv.innerHTML = `
+        <div class="bg-white p-2 rounded-lg shadow-inner mb-3">
+            <img src="${qrUrl}" alt="Surprise QR" class="mx-auto" style="width:200px; height:200px;">
+        </div>
+        <button id="download-qr-btn" class="glass-btn text-xs px-4 py-1">
+            <i class="fas fa-download"></i> Save QR Image
+        </button>
+    `;
+    
+    document.getElementById('download-qr-btn').onclick = () => {
+        const link = document.createElement('a');
+        link.download = 'my-surprise-qr.png';
+        link.href = qrUrl;
+        link.target = "_blank"; // Open in new tab if direct download fails
+        link.click();
+    };
+
     document.getElementById('copy-link-btn').onclick = () => {
         navigator.clipboard.writeText(shareUrl);
         const btn = document.getElementById('copy-link-btn');
-        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Copy Link', 2000);
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check text-success"></i> Magical Link Copied!';
+        setTimeout(() => btn.innerHTML = oldHtml, 2500);
     };
 
-    // Add download logic if user wants to save QR as image
-    const downloadBtn = document.createElement('button');
-    downloadBtn.className = "btn-secondary text-xs mt-2";
-    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Save QR';
-    downloadBtn.onclick = () => {
-        const img = qrDiv.querySelector('img');
-        if (img) {
-            const link = document.createElement('a');
-            link.download = 'surprise-qr.png';
-            link.href = img.src;
-            link.click();
-        }
-    };
-    qrDiv.appendChild(downloadBtn);
-    
     document.getElementById('preview-final-btn').onclick = () => {
         startRecipientFlow();
     };
