@@ -64,8 +64,9 @@ function init() {
 function renderCurvedText(container, text) {
     container.innerHTML = '';
     const letters = text.split('');
-    const deg = 120; // Total arc angle
-    const radius = 250; // Radius of the arc
+    const deg = 100; // Slightly tighter arc
+    const radius = container.clientWidth * 0.45; // Dynamic radius based on width
+
     
     letters.forEach((char, i) => {
         const span = document.createElement('span');
@@ -369,13 +370,17 @@ function saveCurrentStepData() {
     try {
         APP_STATE.config.letter.to = document.getElementById('setup-letter-to').value;
         APP_STATE.config.letter.body = document.getElementById('setup-letter-body').value;
+        
         const finalT = document.getElementById('setup-final-title').value;
-        if (finalT) APP_STATE.config.final.title = finalT;
+        APP_STATE.config.final.title = finalT || 'HAPPY BIRTHDAY MY LOVE';
+        
         const finalTo = document.getElementById('setup-final-to').value;
-        if (finalTo) APP_STATE.config.final.to = finalTo;
+        APP_STATE.config.final.to = finalTo || 'Happy special birthday 💖';
+        
         const finalFrom = document.getElementById('setup-final-from').value;
-        if (finalFrom) APP_STATE.config.final.from = finalFrom;
-    } catch(err) { console.warn(err); }
+        APP_STATE.config.final.from = finalFrom || '';
+    } catch(err) { console.warn("Save Error:", err); }
+
     
     try {
         localStorage.setItem(CONFIG_KEY, JSON.stringify(APP_STATE.config));

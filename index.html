@@ -133,41 +133,32 @@
         </div>
         
         <div id="unlock-container" class="hidden flex-center-all h-100 full-page relative w-100">
-            <h2 class="top-title-text">It's his bday and that's how u surprise him💌</h2>
+            <h2 class="top-title-text" style="position: absolute; top: 5vh; z-index: 100;">It's his bday and that's how u surprise him💌</h2>
             <div class="floating-hearts-bg" id="floating-hearts-bg"></div>
             
-            <div class="laptop-mockup bounce">
-                <div class="laptop-screen">
-                    <div class="browser-header">
-                        <div class="dots"><span></span><span></span><span></span></div>
-                        <div class="address-bar"></div>
-                    </div>
-                        <div class="notebook-page" style="height: calc(100% - 30px); position: relative; background: #ffffff; background-image: linear-gradient(90deg, rgba(200, 220, 240, 0.5) 1px, transparent 1px), linear-gradient(rgba(200, 220, 240, 0.5) 1px, transparent 1px); background-size: 20px 20px;">
-                            <!-- Stickers -->
-                            <div class="sticker sticker-camera"><i class="fas fa-camera"></i></div>
-                            <div class="sticker sticker-rainbow"><i class="fas fa-rainbow"></i></div>
-                            <div class="sticker sticker-bunny"><i class="fas fa-rabbit"></i></div>
-                            <div class="sticker sticker-bunny-left"><i class="fas fa-rabbit"></i></div>
-                            <div class="sticker sticker-cat"><i class="fas fa-cat"></i></div>
-                            
-                            <!-- Sketched Hearts -->
-                            <i class="fas fa-heart heart-sketch sketch-1"></i>
-                            <i class="fas fa-heart heart-sketch sketch-2"></i>
-                            <i class="fas fa-heart heart-sketch sketch-3"></i>
-                            <i class="fas fa-heart heart-sketch sketch-4"></i>
+            <div class="notebook-full-screen" style="width: 90%; max-width: 800px; height: 75vh; background: #ffffff; border-radius: 20px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; background-image: linear-gradient(90deg, rgba(200, 220, 240, 0.5) 1px, transparent 1px), linear-gradient(rgba(200, 220, 240, 0.5) 1px, transparent 1px); background-size: 20px 20px;">
+                <!-- Stickers -->
+                <div class="sticker sticker-camera"><i class="fas fa-camera"></i></div>
+                <div class="sticker sticker-rainbow"><i class="fas fa-rainbow"></i></div>
+                <div class="sticker sticker-bunny"><i class="fas fa-rabbit"></i></div>
+                <div class="sticker sticker-bunny-left"><i class="fas fa-rabbit"></i></div>
+                <div class="sticker sticker-cat"><i class="fas fa-cat"></i></div>
+                
+                <!-- Sketched Hearts -->
+                <i class="fas fa-heart heart-sketch sketch-1"></i>
+                <i class="fas fa-heart heart-sketch sketch-2"></i>
+                <i class="fas fa-heart heart-sketch sketch-3"></i>
+                <i class="fas fa-heart heart-sketch sketch-4"></i>
 
-                            <div class="notebook-inner" style="width:100%; height:100%; border:none; box-shadow:none; display: flex; flex-direction: column; justify-content: space-around; align-items: center; padding: 20px 0;">
-                                <h1 id="view-reveal-title" style="margin-top: 30px;">HAPPY BIRTHDAY MY LOVE</h1>
-                                <p class="sub-title-age" style="color: #b7394c; font-family: 'Patrick Hand', cursive; font-size: 1.4rem; z-index: 20; margin-bottom: 20px;">Happy special birthday 💖</p>
-                            </div>
-
-                            <div class="click-me-hint">CLICK ME</div>
-                        </div>
+                <div class="notebook-inner" style="width:100%; height:100%; border:none; box-shadow:none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0; position: relative;">
+                    <h1 id="view-reveal-title" style="position: absolute; top: 30%; width: 100%; margin: 0; pointer-events: none;">HAPPY BIRTHDAY MY LOVE</h1>
+                    <p class="sub-title-age" style="color: #b7394c; font-family: 'Patrick Hand', cursive; font-size: 1.5rem; z-index: 20; position: absolute; bottom: 15%; width: 100%; text-align: center;">Happy special birthday 💖</p>
                 </div>
-                <div class="laptop-bottom"></div>
+
+                <div class="click-me-hint" style="bottom: 10px; right: 10px;">CLICK ME</div>
             </div>
-            
-            <button id="unlock-btn" class="glow-btn w-auto px-40 mt-5 z-10 bounce" style="max-width: 300px; position: absolute; bottom: 10vh;">Open Your Gift ❤️</button>
+
+            <button id="unlock-btn" class="glow-btn w-auto px-40 mt-5 z-10 bounce" style="max-width: 300px; position: relative; margin-top: 20px;">Open Your Gift ❤️</button>
         </div>
     </section>
     

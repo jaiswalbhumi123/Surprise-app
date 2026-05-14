@@ -1149,13 +1149,38 @@ body.dark-theme .glass-btn:hover {
     position: relative;
     margin: auto;
     z-index: 5;
-    width: 90%;
+    width: 95%;
     max-width: 600px;
     height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
+@media (max-width: 600px) {
+    .cute-card-wrapper {
+        width: 100%;
+        padding: 0 5px;
+    }
+    .laptop-mockup {
+        padding: 5px;
+    }
+    .browser-header {
+        height: 20px;
+        padding: 0 5px;
+    }
+    .dots span {
+        width: 5px;
+        height: 5px;
+    }
+    .address-bar {
+        height: 12px;
+    }
+    .sub-title-age {
+        font-size: 1.1rem !important;
+    }
+}
+
 
 /* 💻 LAPTOP MOCKUP */
 .laptop-mockup {
