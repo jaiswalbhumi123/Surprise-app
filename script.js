@@ -512,6 +512,11 @@ let html5QrcodeScanner = null;
 document.getElementById('scan-qr-btn').onclick = () => {
     document.getElementById('scanner-modal').classList.remove('hidden');
     
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("🔴 CAMERA BLOCKED: Your browser requires 'HTTPS' to use the camera scanner. \n\nPlease:\n1. Copy the link manually.\n2. Or use a secure hosting provider (GitHub Pages/Vercel).");
+        return;
+    }
+    
     if (typeof Html5QrcodeScanner === 'undefined') {
         document.getElementById('scanner-status').innerText = 'Scanner library loading or failed...';
         return;
@@ -1187,7 +1192,17 @@ function renderFinalPhotosPreview() {
         imgContainer.appendChild(removeBtn);
         boxList.appendChild(imgContainer);
     });
+    // FINAL SCREEN: Inputs & Finish
+    document.getElementById('setup-final-title').oninput = saveCurrentStepData;
+    document.getElementById('setup-final-to').oninput = saveCurrentStepData;
+    document.getElementById('setup-final-from').oninput = saveCurrentStepData;
+
+    document.getElementById('finish-creator-btn').onclick = () => {
+        saveCurrentStepData();
+        saveToCloud();
+    };
 }
+
 
 
 window.onload = () => {
