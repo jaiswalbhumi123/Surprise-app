@@ -39,7 +39,7 @@ const APP_STATE = {
             { img: null, note: '' }
         ],
         final: { images: [], title: 'Happy Anniversary!', to: 'My Love', from: 'Abhay' },
-        musicUrl: 'https://cdn.pixabay.com/download/audio/2022/11/22/audio_7acb8bbab2.mp3'
+        musicUrl: ''
     }
 };
 
@@ -60,6 +60,25 @@ function init() {
     } else {
         navigateTo('launch');
     }
+}
+function renderCurvedText(container, text) {
+    container.innerHTML = '';
+    const letters = text.split('');
+    const deg = 120; // Total arc angle
+    const radius = 250; // Radius of the arc
+    
+    letters.forEach((char, i) => {
+        const span = document.createElement('span');
+        span.innerText = char === ' ' ? '\u00A0' : char;
+        span.className = 'curved-letter';
+        
+        const angle = -deg / 2 + (deg / (letters.length - 1)) * i;
+        const x = Math.sin(angle * Math.PI / 180) * radius;
+        const y = -Math.cos(angle * Math.PI / 180) * radius; // Remove offset to center vertically
+        
+        span.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+        container.appendChild(span);
+    });
 }
 
 // Memory Limit Helper
@@ -241,34 +260,72 @@ async function loadFromCloud(id) {
 
 function generateQR(id) {
     const shareUrl = window.location.origin + window.location.pathname + "?id=" + id;
+    window.sharedUrl = shareUrl; // Store globally for share buttons
     const qrDiv = document.getElementById('qrcode-container');
     
-    // Use Google Chart API for guaranteed fresh and high-quality QR
-    const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(shareUrl)}&choe=UTF-8`;
-    
     qrDiv.innerHTML = `
-        <div class="bg-white p-2 rounded-lg shadow-inner mb-3">
-            <img src="${qrUrl}" alt="Surprise QR" class="mx-auto" style="width:200px; height:200px;">
-        </div>
+        <div class="bg-white p-2 rounded-lg shadow-inner mb-3" id="qr-code-canvas-container" style="display:inline-block;"></div>
         <button id="download-qr-btn" class="glass-btn text-xs px-4 py-1">
             <i class="fas fa-download"></i> Save QR Image
         </button>
     `;
     
+    // Generate QR using the qrcode.min.js library
+    setTimeout(() => {
+        new QRCode(document.getElementById("qr-code-canvas-container"), {
+            text: shareUrl,
+            width: 200,
+            height: 200,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    }, 100);
+    
     document.getElementById('download-qr-btn').onclick = () => {
-        const link = document.createElement('a');
-        link.download = 'my-surprise-qr.png';
-        link.href = qrUrl;
-        link.target = "_blank"; // Open in new tab if direct download fails
-        link.click();
+        const canvas = document.querySelector('#qr-code-canvas-container canvas');
+        if(canvas) {
+            const link = document.createElement('a');
+            link.download = 'my-surprise-qr.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
     };
 
     document.getElementById('copy-link-btn').onclick = () => {
-        navigator.clipboard.writeText(shareUrl);
-        const btn = document.getElementById('copy-link-btn');
-        const oldHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check text-success"></i> Magical Link Copied!';
-        setTimeout(() => btn.innerHTML = oldHtml, 2500);
+        const textToCopy = shareUrl;
+        
+        // Robust Copy Method
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(() => showSuccess()).catch(() => fallbackCopy());
+        } else {
+            fallbackCopy();
+        }
+
+        function fallbackCopy() {
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showSuccess();
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showSuccess() {
+            const btn = document.getElementById('copy-link-btn');
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check text-success"></i> Magical Link Copied!';
+            setTimeout(() => btn.innerHTML = oldHtml, 2500);
+        }
     };
 
     document.getElementById('preview-final-btn').onclick = () => {
@@ -417,9 +474,17 @@ function updateTimer() {
             }
         }
         
-        // Show User's Custom Title
+        // Show User's Custom Title (Notebook Style with Rainbow Arch)
         const revealTitle = document.getElementById('view-reveal-title');
-        if (revealTitle) revealTitle.innerText = APP_STATE.config.final.title || 'HAPPY BIRTHDAY!';
+        const revealSub = document.querySelector('.sub-title-age');
+        
+        if (revealTitle) {
+            const text = (APP_STATE.config.final.title || 'HAPPY BIRTHDAY MY LOVE').toUpperCase();
+            renderCurvedText(revealTitle, text);
+        }
+        if (revealSub) {
+            revealSub.innerText = APP_STATE.config.final.to || 'Happy special birthday 💖';
+        }
         
         // Final Confetti Burst
         confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
@@ -440,9 +505,85 @@ function updateTimer() {
 // Buttons & Actions
 document.getElementById('create-mode-btn').onclick = () => navigateTo('auth');
 document.getElementById('view-mode-btn').onclick = () => startRecipientFlow();
+
+// --- QR SCANNER LOGIC ---
+let html5QrcodeScanner = null;
+
+document.getElementById('scan-qr-btn').onclick = () => {
+    document.getElementById('scanner-modal').classList.remove('hidden');
+    
+    if (typeof Html5QrcodeScanner === 'undefined') {
+        document.getElementById('scanner-status').innerText = 'Scanner library loading or failed...';
+        return;
+    }
+    document.getElementById('scanner-status').innerText = 'Please click "Request Camera Permissions" below.';
+
+    if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+    }
+    
+    html5QrcodeScanner.render((decodedText, decodedResult) => {
+        // Handle success
+        html5QrcodeScanner.clear().catch(e => console.error(e));
+        document.getElementById('scanner-modal').classList.add('hidden');
+        
+        try {
+            const url = new URL(decodedText);
+            const id = url.searchParams.get('id');
+            if (id) {
+                loadFromCloud(id);
+                return;
+            }
+        } catch(e) {}
+        
+        if(decodedText.length > 5) {
+            loadFromCloud(decodedText);
+        } else {
+            alert("Invalid Surprise QR Code!");
+        }
+    }, (error) => {
+        // Handle errors passively
+    });
+};
+
+document.getElementById('close-scanner-btn').onclick = () => {
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear().catch(e => console.error(e));
+    }
+    document.getElementById('scanner-modal').classList.add('hidden');
+};
+
+document.getElementById('manual-id-btn').onclick = () => {
+    const val = document.getElementById('manual-id-input').value.trim();
+    if(val) {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.clear().catch(e => console.error(e));
+        }
+        document.getElementById('scanner-modal').classList.add('hidden');
+        
+        try {
+            const url = new URL(val);
+            const id = url.searchParams.get('id');
+            if(id) { loadFromCloud(id); return; }
+        } catch(e) {}
+        
+        loadFromCloud(val);
+    }
+};
+// ------------------------
 document.getElementById('unlock-btn').onclick = () => {
     const bgMusic = document.getElementById('bg-music');
-    bgMusic.play().catch(() => {});
+    bgMusic.src = APP_STATE.config.musicUrl;
+    bgMusic.load();
+    bgMusic.play().catch(e => {
+        console.warn("Autoplay blocked. User must click again or toggle music manually.", e);
+        // Show a temporary hint if audio fails
+        const hint = document.createElement('div');
+        hint.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:white; padding:10px 20px; border-radius:20px; z-index:9999; font-size:12px;";
+        hint.innerText = "🔇 Audio blocked? Tap the music icon at top-right!";
+        document.body.appendChild(hint);
+        setTimeout(() => hint.remove(), 4000);
+    });
     
     navigateTo('letter');
     document.getElementById('view-letter-to').innerText = APP_STATE.config.letter.to + ',';
@@ -724,6 +865,67 @@ function setupGlobalEvents() {
     document.querySelectorAll('.next-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.next));
     document.querySelectorAll('.prev-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.prev));
     
+    // 🌙 Theme Toggle
+    document.getElementById('theme-toggle').onclick = () => {
+        document.body.classList.toggle('dark-theme');
+        const icon = document.querySelector('#theme-toggle i');
+        if (document.body.classList.contains('dark-theme')) {
+            icon.className = 'fas fa-sun text-gold';
+        } else {
+            icon.className = 'fas fa-moon';
+        }
+    };
+    
+    // 🎵 Music Toggle
+    document.getElementById('music-toggle').onclick = () => {
+        const bgMusic = document.getElementById('bg-music');
+        const icon = document.querySelector('#music-toggle i');
+        if (bgMusic.paused) {
+            bgMusic.play().catch(e => console.error(e));
+            icon.className = 'fas fa-pause text-primary';
+        } else {
+            bgMusic.pause();
+            icon.className = 'fas fa-music';
+        }
+    };
+    
+    
+    // 🌍 Share Buttons
+    document.getElementById('share-wa-btn').onclick = () => {
+        const url = window.sharedUrl || window.location.href;
+        window.open(`https://api.whatsapp.com/send?text=I made a magical surprise for you! Open it here: ${encodeURIComponent(url)}`, '_blank');
+    };
+    
+    document.getElementById('share-tw-btn').onclick = () => {
+        const url = window.sharedUrl || window.location.href;
+        window.open(`https://twitter.com/intent/tweet?text=Check out this awesome Digital Surprise Creator! ✨&url=${encodeURIComponent(url)}`, '_blank');
+    };
+    
+    // 🖼️ Download Card
+    const downloadBtn = document.getElementById('download-card-btn');
+    if (downloadBtn) {
+        downloadBtn.onclick = async () => {
+            const originalBtnHtml = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            try {
+                const canvas = await html2canvas(document.querySelector('.final-card-content'), {
+                    backgroundColor: document.body.classList.contains('dark-theme') ? '#121214' : '#fff8fb',
+                    scale: 2,
+                    useCORS: true
+                });
+                const link = document.createElement('a');
+                link.download = 'my-magical-surprise.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                downloadBtn.innerHTML = '<i class="fas fa-check text-success"></i> Saved!';
+            } catch (err) {
+                console.error('Download failed', err);
+                downloadBtn.innerHTML = '<i class="fas fa-times text-red"></i> Failed';
+            }
+            setTimeout(() => downloadBtn.innerHTML = originalBtnHtml, 3000);
+        };
+    }
+    
     // 🎵 BACKGROUND MUSIC: Library & Upload
     const musicCards = document.querySelectorAll('.music-card');
     const previewAudio = new Audio();
@@ -733,11 +935,13 @@ function setupGlobalEvents() {
     musicCards.forEach(card => {
         card.onclick = () => {
             const url = card.dataset.url;
+            if (!url) return; // Ignore clicks on the 'Upload' label card
+
             const name = card.querySelector('span').innerText;
             const indicator = document.getElementById('music-playing-indicator');
             
             // If same card clicked and playing -> PAUSE
-            if (previewAudio.src === url && !previewAudio.paused) {
+            if (previewAudio.src.includes(url) && !previewAudio.paused) {
                 previewAudio.pause();
                 indicator.innerHTML = `<i class="fas fa-pause-circle"></i> Paused: <b>${name}</b>`;
                 return;
@@ -778,26 +982,34 @@ function setupGlobalEvents() {
         reader.readAsDataURL(e.target.files[0]);
     };
 
-    // AUDIO: File Upload (Voice Note)
+    // AUDIO: Voice Note Handling
+    const voicePreviewCont = document.getElementById('voice-preview-container');
+    const voiceStatusText = document.getElementById('voice-status-text');
+
+    function updateVoiceUI(status) {
+        if (APP_STATE.config.voice) {
+            voicePreviewCont.classList.remove('hidden');
+            voiceStatusText.innerHTML = `<i class="fas fa-check-circle"></i> ${status}`;
+        } else {
+            voicePreviewCont.classList.add('hidden');
+        }
+    }
+
     document.getElementById('upload-voice').onchange = (e) => {
         if (!e.target.files[0]) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
             APP_STATE.config.voice = ev.target.result;
-            document.getElementById('voice-preview').classList.remove('hidden');
-            document.getElementById('voice-preview').innerHTML = '<i class="fas fa-check-circle text-success"></i> Audio File Saved!';
+            updateVoiceUI('Audio File Uploaded!');
             saveCurrentStepData();
         };
         reader.readAsDataURL(e.target.files[0]);
     };
 
-    // AUDIO: Live Recording (Improved Stability)
     let mediaRecorder;
     let audioChunks = [];
     document.getElementById('rec-btn').onclick = async function() {
         const btn = this;
-        const indicator = document.getElementById('music-playing-indicator');
-
         if (mediaRecorder && mediaRecorder.state === 'recording') {
             mediaRecorder.stop();
             btn.innerHTML = '<i class="fas fa-microphone"></i> Start Recording';
@@ -806,20 +1018,16 @@ function setupGlobalEvents() {
         }
         
         try {
-            // STOP setup music if playing
-            if(!previewAudio.paused) {
-                previewAudio.pause();
-                previewAudio.currentTime = 0;
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("🔴 SECURITY BLOCK: Your browser is blocking the microphone because this site is not using 'HTTPS'. \n\nSolutions:\n1. Use 'Upload Audio File' instead.\n2. Open the site on your computer at 'localhost:8080'.\n3. Host your site on GitHub Pages or Vercel for free HTTPS.");
+                return;
             }
-            if(indicator) indicator.classList.add('hidden');
 
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
-            
             audioChunks = [];
-            mediaRecorder.ondataavailable = e => {
-                if(e.data.size > 0) audioChunks.push(e.data);
-            };
+            
+            mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
             
             mediaRecorder.onstop = () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -827,9 +1035,9 @@ function setupGlobalEvents() {
                 reader.readAsDataURL(audioBlob);
                 reader.onloadend = () => {
                     APP_STATE.config.voice = reader.result;
-                    document.getElementById('voice-preview').classList.remove('hidden');
-                    document.getElementById('voice-preview').innerHTML = '<i class="fas fa-check-circle text-success"></i> Voice Note Recorded!';
+                    updateVoiceUI('Voice Note Recorded!');
                     saveCurrentStepData();
+                    stream.getTracks().forEach(track => track.stop()); // Stop mic stream
                 };
             };
 
@@ -838,9 +1046,23 @@ function setupGlobalEvents() {
             btn.classList.add('pulse-btn');
         } catch (err) {
             console.error("Recording error:", err);
-            alert('Could not start recording. Please make sure to ALLOW microphone access when the browser asks.');
+            alert('Microphone error. Please allow permission or try uploading a file.');
         }
     };
+
+    document.getElementById('play-voice-preview').onclick = () => {
+        if (APP_STATE.config.voice) {
+            const audio = new Audio(APP_STATE.config.voice);
+            audio.play().catch(e => alert("Playback error: " + e.message));
+        }
+    };
+
+    document.getElementById('clear-voice').onclick = () => {
+        APP_STATE.config.voice = null;
+        updateVoiceUI();
+        saveCurrentStepData();
+    };
+
 
     // FINAL PHOTO: Compressed (Multiple 5 to 8 images)
     const finalPhotoInput = document.getElementById('setup-final-photo');
@@ -968,4 +1190,6 @@ function renderFinalPhotosPreview() {
 }
 
 
-init();
+window.onload = () => {
+    init();
+};

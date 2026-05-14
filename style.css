@@ -28,6 +28,32 @@ body {
     overflow-x: hidden;
     height: 100vh;
     width: 100vw;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* 🌙 DARK THEME */
+body.dark-theme {
+    --primary: #ff8da1;
+    --bg-color: #121214;
+    --glass-bg: rgba(30, 30, 35, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-color: #f0f0f0;
+    --text-muted: #b0b0b0;
+}
+
+body.dark-theme .bg-wrapper {
+    background: linear-gradient(135deg, #1a1a2e 0%, #101015 100%);
+}
+
+body.dark-theme .category-card, body.dark-theme .music-card, body.dark-theme .memory-slot {
+    background: rgba(40, 40, 45, 0.8);
+    color: var(--text-color);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .slot-note, body.dark-theme .glass-input {
+    background: rgba(20, 20, 25, 0.6);
+    color: white;
 }
 
 /* 🌌 DYNAMIC BACKGROUND */
@@ -212,11 +238,51 @@ body {
     border-radius: 20px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+}
+
+body.dark-theme .glass-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .glass-btn:hover {
     background: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .glass-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* FLOATING CONTROLS */
+.floating-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.icon-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.bg-gradient {
+    background: linear-gradient(45deg, var(--primary), #a29bfe);
+    box-shadow: 0 8px 25px rgba(162, 155, 254, 0.4);
+}
+.bg-gradient:hover {
+    box-shadow: 0 12px 30px rgba(162, 155, 254, 0.6);
 }
 
 /* 🔐 AUTH & SETUP CARDS */
@@ -1083,10 +1149,84 @@ body {
     position: relative;
     margin: auto;
     z-index: 5;
-    margin-top: 5vh;
-    width: 340px;
-    height: 220px;
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+/* 💻 LAPTOP MOCKUP */
+.laptop-mockup {
+    background: #333;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+
+.laptop-screen {
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    position: relative;
+}
+
+.browser-header {
+    background: #e0e0e0;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 10px;
+}
+
+.dots { display: flex; gap: 5px; }
+.dots span { width: 8px; height: 8px; border-radius: 50%; background: #ff5f57; }
+.dots span:nth-child(2) { background: #febc2e; }
+.dots span:nth-child(3) { background: #28c840; }
+
+.address-bar {
+    background: white;
+    height: 18px;
+    flex-grow: 1;
+    border-radius: 10px;
+}
+
+.laptop-bottom {
+    background: #444;
+    height: 15px;
+    width: 110%;
+    margin-left: -5%;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 🔴 FULL SCREEN RED BG */
+#unlock-container {
+    background: #8e0000 !important;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+
+.top-title-text {
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+    width: 90%;
+}
+
 
 .cute-card-back {
     position: absolute;
@@ -1108,27 +1248,164 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffd6e0;
-    border: 4px solid #ffadc2;
-    border-radius: 20px;
+    background: #ffffff;
+    background-image: 
+        linear-gradient(90deg, rgba(200, 220, 240, 0.5) 1px, transparent 1px),
+        linear-gradient(rgba(200, 220, 240, 0.5) 1px, transparent 1px);
+    background-size: 20px 20px; /* Checkered pattern */
+    border: 6px solid #b3d9ff;
+    border-radius: 10px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     z-index: 2;
-    transform: rotate(-2deg);
-    box-shadow: 0 10px 25px rgba(255, 182, 193, 0.3);
+    transform: rotate(-1deg);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    overflow: hidden;
+}
+
+.notebook-inner {
+    background: white;
+    width: 90%;
+    height: 85%;
+    border-radius: 5px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
     padding: 20px;
+    border: 1px solid #eee;
 }
 
 .cute-card-front h1 {
-    font-size: 2.8rem;
-    color: #cc5268;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60%; 
     width: 100%;
-    text-align: center;
-    font-family: 'Patrick Hand', 'Dancing Script', cursive;
-    line-height: 1.2;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
 }
+
+.curved-letter {
+    display: inline-block;
+    position: absolute;
+    transform-origin: center center;
+    font-size: clamp(1.8rem, 8vw, 3.5rem) !important;
+    font-family: 'Patrick Hand', cursive;
+    color: #4a90e2;
+    text-shadow: 2px 2px 0px white;
+    transition: 0.3s;
+    animation: titleFloat 2s ease-in-out infinite;
+}
+
+
+@keyframes titleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+
+
+.sub-title-age {
+    font-family: 'Patrick Hand', cursive;
+    color: #cc5268;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/* 🎨 STICKERS */
+.sticker {
+    position: absolute;
+    z-index: 4;
+    filter: drop-shadow(2px 2px 0px white) drop-shadow(-2px -2px 0px white) drop-shadow(2px -2px 0px white) drop-shadow(-2px 2px 0px white);
+}
+
+.sticker-camera {
+    top: 15%;
+    left: 8%;
+    font-size: 2.2rem;
+    color: #a8d5ba;
+    transform: rotate(-15deg);
+    animation: stickerFloat 4s ease-in-out infinite;
+}
+
+.sticker-rainbow {
+    top: 15%;
+    right: 8%;
+    font-size: 2.5rem;
+    color: #ffb7b2;
+    transform: rotate(15deg);
+    animation: stickerFloat 4.5s ease-in-out infinite 0.5s;
+}
+
+
+.sticker-bunny {
+    bottom: 15%;
+    right: 8%;
+    font-size: 2.8rem;
+    color: #ffcce0;
+    transform: rotate(-10deg);
+    animation: stickerFloat 4s ease-in-out infinite 1s;
+}
+
+.sticker-bunny-left {
+    bottom: 15%;
+    left: 8%;
+    font-size: 2.8rem;
+    color: #ffcce0;
+    transform: rotate(10deg) scaleX(-1);
+    animation: stickerFloat 4s ease-in-out infinite 1.5s;
+}
+
+.sticker-cat {
+    top: 40%;
+    right: 5%;
+    font-size: 2rem;
+    color: #ffca28;
+    animation: stickerFloat 5s ease-in-out infinite 0.2s;
+}
+
+
+.heart-sketch {
+    position: absolute;
+    color: #4a90e2;
+    font-size: 1rem;
+    opacity: 0.6;
+    animation: heartBeat 2s infinite ease-in-out;
+}
+
+@keyframes stickerFloat {
+    0%, 100% { transform: translateY(0) rotate(-15deg); }
+    50% { transform: translateY(-10px) rotate(-10deg); }
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 1; }
+}
+
+.sketch-1 { top: 30%; left: 15%; animation-delay: 0s; }
+.sketch-2 { top: 30%; right: 15%; animation-delay: 0.4s; }
+.sketch-3 { bottom: 30%; left: 20%; animation-delay: 0.8s; }
+.sketch-4 { bottom: 30%; right: 20%; animation-delay: 1.2s; }
+
+.click-me-hint {
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+    font-size: 0.6rem;
+    color: #999;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 1px;
+}
+
 
 /* 🌸 DECALS */
 .cute-bandaid {
@@ -1763,4 +2040,14 @@ body {
     
     .balloon-item { width: 32px; height: 42px; font-size: 1rem; }
     .confetti-btn { order: 8; margin-top: 20px; margin-bottom: 40px; }
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.music-card span {
+    font-size: 0.9rem;
+    font-weight: 600;
 }

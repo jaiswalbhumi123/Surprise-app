@@ -22,6 +22,12 @@
     <!-- 🔊 Background Music -->
     <audio id="bg-music" loop></audio>
 
+    <!-- Floating UI Controls -->
+    <div class="floating-controls">
+        <button id="music-toggle" class="glass-btn icon-btn" title="Play/Pause Music"><i class="fas fa-music"></i></button>
+        <button id="theme-toggle" class="glass-btn icon-btn" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+    </div>
+
     <!-- 🚪 SCREEN 0: APP LAUNCH -->
     <section id="launch-screen" class="screen active full-page glass-bg">
         <div class="splash-content text-center fade-in">
@@ -65,20 +71,14 @@
     <section id="setup-time-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-4 text-3xl">Set the Magical Time ⏳</h2><p class="text-sm mb-4">When should the surprise unlock?</p><div class="input-group mb-4"><input type="datetime-local" id="setup-target-date" class="glass-input w-100"></div><div class="category-grid" style="grid-template-columns: 1fr;"><div class="category-card selected" data-type="general" style="width: 100%;"><i class="fas fa-star" style="color: #ffca28;"></i><span style="font-weight: 800;">Special Celebration ✨</span><p class="text-xs text-muted">(Perfect for Birthdays, Anniversaries, or Any Special Day!)</p></div></div><button class="glow-btn next-setup-btn mt-5 w-100" data-next="setup-music">Next: Choose Music 🎵</button></div></section>
 
     <section id="setup-music-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-3 text-3xl">Magical Music 🎵</h2><p class="text-sm mb-4">Choose a background song for the surprise!</p>
-        <div class="music-library-grid mb-4">
-            <div class="music-card active" data-url="https://archive.org/download/happy-birthday-instrumental_202103/Happy%20Birthday%20Instrumental.mp3">
-                <i class="fas fa-gift"></i> <span>Soft Bday</span>
-            </div>
-            <div class="music-card" data-url="https://archive.org/download/romantic-piano-music-2021/Romantic%20Piano%20Music.mp3">
-                <i class="fas fa-heart"></i> <span>Deep Love</span>
-            </div>
-            <div class="music-card" data-url="https://archive.org/download/upbeat-acoustic-music-2021/Upbeat%20Acoustic%20Music.mp3">
-                <i class="fas fa-sparkles"></i> <span>Cute Pop</span>
-            </div>
+        <div class="music-library-grid mb-4" style="display: flex; justify-content: center;">
+            <label for="upload-music" class="music-card" style="cursor:pointer; margin-bottom: 0; width: 100%; max-width: 300px;">
+                <div class="card-icon"><i class="fas fa-cloud-upload-alt text-success" style="font-size: 3rem;"></i></div>
+                <span style="font-size: 1.2rem;">Upload Your Own Song</span>
+                <p class="text-xs text-muted mt-2">Select an MP3 file from your device</p>
+            </label>
         </div>
-        <p class="text-xs mb-3">... OR UPLOAD YOUR OWN SONG ...</p>
-        <label for="upload-music" class="glass-btn w-100 d-block mb-2" style="cursor:pointer;"><i class="fas fa-cloud-upload-alt"></i> Upload Custom MP3</label>
-        <input type="file" id="upload-music" accept="audio/*" class="hidden-input">
+        <input type="file" id="upload-music" accept="audio/*, .mp3, .wav, .m4a, .aac" class="hidden-input">
         <div id="music-playing-indicator" class="text-xs text-success font-bold mt-2 hidden"><i class="fas fa-play-circle fa-spin"></i> Preview Playing...</div>
 
         <div class="flex-between mt-5">
@@ -89,7 +89,7 @@
 
     <section id="setup-letter-screen" class="screen hidden full-page"><div class="glass-panel wide-panel"><h2 class="section-title text-center mb-4 text-3xl">Write Your Message 📜</h2><div class="editor-area"><input type="text" id="setup-letter-to" placeholder="To My Love," class="glass-input w-100 mb-2 font-bold handwriting"><textarea id="setup-letter-body" class="glass-input w-100 handwriting" rows="10" placeholder="Write your heartfelt message here..."></textarea></div><div class="flex-between mt-4"><button class="nav-btn prev-setup-btn" data-prev="setup-music">Back</button><button class="glow-btn next-setup-btn" data-next="setup-voice">Next: Add Voice Note 🎤</button></div></div></section>
 
-    <section id="setup-voice-screen" class="screen hidden full-page"><div class="glass-panel text-center"><h2 class="section-title mb-4 text-3xl">Record or Upload Voice 🎙️</h2><div class="voice-setup-box flex-column gap-3"><button id="rec-btn" class="glow-btn large-btn pulse-btn mb-3"><i class="fas fa-microphone"></i> Start Recording</button><p>OR</p><label for="upload-voice" class="glass-btn mt-3 w-100"><i class="fas fa-upload"></i> Upload Audio File</label><input type="file" id="upload-voice" accept="audio/*" hidden></div><div id="voice-preview" class="hidden mt-4 glass-panel-inner"><i class="fas fa-volume-up text-success"></i> Voice Saved!</div><div class="flex-between mt-5"><button class="nav-btn prev-setup-btn" data-prev="setup-letter">Back</button><button class="glow-btn next-setup-btn" data-next="setup-game">Next: Game Memories 💖</button></div></div></section>
+    <section id="setup-voice-screen" class="screen hidden full-page"><div class="glass-panel text-center"><h2 class="section-title mb-4 text-3xl">Record or Upload Voice 🎙️</h2><div class="voice-setup-box flex-column gap-3"><button id="rec-btn" class="glow-btn large-btn pulse-btn mb-3"><i class="fas fa-microphone"></i> Start Recording</button><p>OR</p><label for="upload-voice" class="glass-btn mt-3 w-100"><i class="fas fa-upload"></i> Upload Audio File</label><input type="file" id="upload-voice" accept="audio/*, .mp3, .wav, .m4a, .aac" hidden></div><div id="voice-preview-container" class="hidden mt-4 glass-panel-inner"><p id="voice-status-text" class="text-success mb-2"><i class="fas fa-check-circle"></i> Voice Saved!</p><div class="flex-row justify-center gap-2"><button id="play-voice-preview" class="glass-btn px-4"><i class="fas fa-play"></i> Listen</button><button id="clear-voice" class="glass-btn px-4 text-red"><i class="fas fa-trash"></i> Clear</button></div></div><div class="flex-between mt-5"><button class="nav-btn prev-setup-btn" data-prev="setup-letter">Back</button><button class="glow-btn next-setup-btn" data-next="setup-game">Next: Game Memories 💖</button></div></div></section>
 
     <section id="setup-game-screen" class="screen hidden full-page overflow-y"><div class="glass-panel wide-panel"><h2 class="section-title text-center mb-2 text-3xl">Game Memories Setup 🎮</h2><p class="text-center text-xs text-muted mb-4">Add 5 photos + 5 notes for the heart game!</p><div class="memory-setup-list" id="memory-setup-list"></div><div class="flex-between mt-4"><button class="nav-btn prev-setup-btn" data-prev="setup-voice">Back</button><button class="glow-btn next-setup-btn" data-next="setup-final">Next: Final Surprise 🎁</button></div></div></section>
 
@@ -117,7 +117,7 @@
         <button id="finish-creator-btn" class="glow-btn w-100 mt-2">Save Everything & Finish! 🔥</button>
     </div></section>
 
-    <section id="sharing-screen" class="screen hidden full-page"><div class="glass-panel text-center"><i class="fas fa-check-circle text-success text-3xl mb-3"></i><h2 class="section-title text-3xl">Ready to Share!</h2><div id="qrcode-container" class="mx-auto flex flex-col items-center mb-4" style="width:240px; min-height:240px;"></div><button id="copy-link-btn" class="glass-btn w-100 mb-2"><i class="fas fa-copy"></i> Copy Link</button><button id="preview-final-btn" class="glow-btn w-100 mt-2"><i class="fas fa-eye"></i> Preview Experience</button></div></section>
+    <section id="sharing-screen" class="screen hidden full-page"><div class="glass-panel text-center"><i class="fas fa-check-circle text-success text-3xl mb-3"></i><h2 class="section-title text-3xl">Ready to Share!</h2><div id="qrcode-container" class="mx-auto flex flex-col items-center mb-4" style="width:240px; min-height:240px;"></div><button id="copy-link-btn" class="glass-btn w-100 mb-2"><i class="fas fa-copy"></i> Copy Link</button><div class="flex-row gap-2 w-100 mb-2 justify-center"><button id="share-wa-btn" class="glass-btn flex-1 text-success"><i class="fab fa-whatsapp text-2xl"></i> Share</button><button id="share-tw-btn" class="glass-btn flex-1 text-blue"><i class="fab fa-twitter text-2xl"></i> Share</button></div><button id="preview-final-btn" class="glow-btn w-100 mt-2"><i class="fas fa-eye"></i> Preview Experience</button></div></section>
 
     <!-- 🌌 RECIPIENT FLOW -->
     <section id="countdown-screen" class="screen hidden full-page">
@@ -133,26 +133,41 @@
         </div>
         
         <div id="unlock-container" class="hidden flex-center-all h-100 full-page relative w-100">
+            <h2 class="top-title-text">It's his bday and that's how u surprise him💌</h2>
             <div class="floating-hearts-bg" id="floating-hearts-bg"></div>
-            <div class="cute-card-wrapper bounce">
-                <div class="cute-card-back"></div>
-                <div class="cute-card-front">
-                    <!-- Band-Aid -->
-                    <div class="cute-bandaid"></div>
-                    <!-- Flowers -->
-                    <div class="cute-flowers">
-                        <i class="fas fa-asterisk f-big"></i>
-                        <i class="fas fa-asterisk f-small"></i>
-                        <i class="fas fa-circle f-small" style="font-size: 0.5rem; margin-top: -5px;"></i>
+            
+            <div class="laptop-mockup bounce">
+                <div class="laptop-screen">
+                    <div class="browser-header">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <div class="address-bar"></div>
                     </div>
-                    <!-- Stars -->
-                    <i class="fas fa-star cute-star-top"></i>
-                    <i class="fas fa-star cute-star-bottom"></i>
-                    
-                    <h1 id="view-reveal-title">Happy Birthday Baby!</h1>
+                        <div class="notebook-page" style="height: calc(100% - 30px); position: relative; background: #ffffff; background-image: linear-gradient(90deg, rgba(200, 220, 240, 0.5) 1px, transparent 1px), linear-gradient(rgba(200, 220, 240, 0.5) 1px, transparent 1px); background-size: 20px 20px;">
+                            <!-- Stickers -->
+                            <div class="sticker sticker-camera"><i class="fas fa-camera"></i></div>
+                            <div class="sticker sticker-rainbow"><i class="fas fa-rainbow"></i></div>
+                            <div class="sticker sticker-bunny"><i class="fas fa-rabbit"></i></div>
+                            <div class="sticker sticker-bunny-left"><i class="fas fa-rabbit"></i></div>
+                            <div class="sticker sticker-cat"><i class="fas fa-cat"></i></div>
+                            
+                            <!-- Sketched Hearts -->
+                            <i class="fas fa-heart heart-sketch sketch-1"></i>
+                            <i class="fas fa-heart heart-sketch sketch-2"></i>
+                            <i class="fas fa-heart heart-sketch sketch-3"></i>
+                            <i class="fas fa-heart heart-sketch sketch-4"></i>
+
+                            <div class="notebook-inner" style="width:100%; height:100%; border:none; box-shadow:none; display: flex; flex-direction: column; justify-content: space-around; align-items: center; padding: 20px 0;">
+                                <h1 id="view-reveal-title" style="margin-top: 30px;">HAPPY BIRTHDAY MY LOVE</h1>
+                                <p class="sub-title-age" style="color: #b7394c; font-family: 'Patrick Hand', cursive; font-size: 1.4rem; z-index: 20; margin-bottom: 20px;">Happy special birthday 💖</p>
+                            </div>
+
+                            <div class="click-me-hint">CLICK ME</div>
+                        </div>
                 </div>
+                <div class="laptop-bottom"></div>
             </div>
-            <button id="unlock-btn" class="glow-btn w-auto px-40 mt-5 z-10 bounce" style="max-width: 300px;">Open Your Gift ❤️</button>
+            
+            <button id="unlock-btn" class="glow-btn w-auto px-40 mt-5 z-10 bounce" style="max-width: 300px; position: absolute; bottom: 10vh;">Open Your Gift ❤️</button>
         </div>
     </section>
     
@@ -270,7 +285,10 @@
                 <p id="view-final-from" class="cursive-red text-center" style="font-family: 'Patrick Hand', cursive; font-size: 1.1rem; opacity: 0.8;"></p>
             </div>
             
-            <button class="nav-btn mt-3 z-10 mx-auto" onclick="location.reload()" style="display:block;"><i class="fas fa-redo"></i> Relive Surprise</button>
+            <div class="flex-row gap-2 mt-3 z-10 justify-center">
+                <button id="download-card-btn" class="glass-btn"><i class="fas fa-download"></i> Save Card</button>
+                <button class="glow-btn" onclick="location.reload()"><i class="fas fa-redo"></i> Relive</button>
+            </div>
         </div>
         
         <!-- Left Side Photos -->
@@ -295,6 +313,23 @@
     </section>
 
 
+    <!-- 📷 QR Scanner Modal -->
+    <div id="scanner-modal" class="modal hidden">
+        <div class="glass-panel text-center w-100 p-3" style="max-width: 90%; width: 400px; padding: 20px;">
+            <h2 class="section-title mb-3" style="font-size: 1.8rem;">Scan QR 📷</h2>
+            <div id="qr-reader" style="width: 100%; border-radius: 15px; overflow: hidden; border: 2px solid var(--primary-light);"></div>
+            <p id="scanner-status" class="text-xs text-muted mt-2">Requesting camera permissions...</p>
+            <div class="mt-3">
+                <p class="text-xs mb-2">Or enter ID manually:</p>
+                <div class="input-group flex-row align-center gap-2">
+                    <input type="text" id="manual-id-input" class="glass-input flex-1" placeholder="Paste Surprise ID">
+                    <button id="manual-id-btn" class="glow-btn px-3 py-2"><i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <button id="close-scanner-btn" class="glass-btn w-100 mt-4">Close Scanner</button>
+        </div>
+    </div>
+
     <!-- ☁️ Cloud Sync Modal -->
     <div id="cloud-modal" class="modal hidden loading-overlay">
         <div class="loader-spinner"></div>
@@ -312,6 +347,8 @@
     <!-- Libs -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="script.js?v=999999999"></script>
 </body>
 </html>
