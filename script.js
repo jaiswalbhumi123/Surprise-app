@@ -65,15 +65,21 @@ function renderCurvedText(container, text) {
     if (!container) return;
     const cleanText = (text || 'HAPPY BIRTHDAY').trim().toUpperCase();
     
+    // Dynamic Font Sizing based on text length
+    let fontSize = 55;
+    if (cleanText.length > 15) fontSize = 42;
+    if (cleanText.length > 20) fontSize = 34;
+    if (cleanText.length > 25) fontSize = 28;
+
     // Professional SVG Method - Optimized for all browsers
     const width = 600;
     const height = 300;
     container.innerHTML = `
         <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: auto; overflow: visible; display: block;">
             <defs>
-                <path id="rainbowPath" d="M 50,220 A 250,150 0 0 1 550,220" />
+                <path id="rainbowPath" d="M 20,220 A 280,160 0 0 1 580,220" />
             </defs>
-            <text fill="#4a90e2" font-family="'Patrick Hand', cursive" font-size="55" font-weight="800" style="text-shadow: 2px 2px 0px white;">
+            <text fill="#4a90e2" font-family="'Patrick Hand', cursive" font-size="${fontSize}" font-weight="800" style="text-shadow: 2px 2px 0px white;">
                 <textPath href="#rainbowPath" xlink:href="#rainbowPath" startOffset="50%" text-anchor="middle">
                     ${cleanText}
                 </textPath>
