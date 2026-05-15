@@ -1321,13 +1321,16 @@ body.dark-theme .glass-btn:hover {
 .curved-letter {
     display: inline-block;
     position: absolute;
+    left: 50%;
+    top: 50%;
     transform-origin: center center;
-    font-size: clamp(1.8rem, 8vw, 3.5rem) !important;
+    font-size: clamp(2.2rem, 10vw, 4rem) !important;
     font-family: 'Patrick Hand', cursive;
     color: #4a90e2;
     text-shadow: 2px 2px 0px white;
     transition: 0.3s;
     animation: titleFloat 2s ease-in-out infinite;
+    font-weight: 800;
 }
 
 

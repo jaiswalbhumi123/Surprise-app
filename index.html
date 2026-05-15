@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="data:,"> <!-- Prevent favicon 404 -->
     <title>Digital Surprise Creator ✨</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Dancing+Script:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=888888888">
+    <link rel="stylesheet" href="style.css?v=1.2">
 </head>
 <body class="app-mode">
 
@@ -68,7 +69,11 @@
     </section>
 
     <!-- 🛠️ CREATOR FLOW (WIZARD) -->
-    <section id="setup-time-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-4 text-3xl">Set the Magical Time ⏳</h2><p class="text-sm mb-4">When should the surprise unlock?</p><div class="input-group mb-4"><input type="datetime-local" id="setup-target-date" class="glass-input w-100"></div><div class="category-grid" style="grid-template-columns: 1fr;"><div class="category-card selected" data-type="general" style="width: 100%;"><i class="fas fa-star" style="color: #ffca28;"></i><span style="font-weight: 800;">Special Celebration ✨</span><p class="text-xs text-muted">(Perfect for Birthdays, Anniversaries, or Any Special Day!)</p></div></div><button class="glow-btn next-setup-btn mt-5 w-100" data-next="setup-music">Next: Choose Music 🎵</button></div></section>
+    <section id="setup-time-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-4 text-3xl">Set the Magical Time ⏳</h2>
+        <p class="text-sm mb-4">When should the surprise unlock?</p>
+        <div class="input-group mb-4"><input type="datetime-local" id="setup-target-date" class="glass-input w-100"></div>
+        <button class="glow-btn next-setup-btn mt-5 w-100" data-next="setup-music">Next: Choose Music 🎵</button></div></section>
+
 
     <section id="setup-music-screen" class="screen hidden full-page"><div class="glass-panel wide-panel text-center"><h2 class="section-title mb-3 text-3xl">Magical Music 🎵</h2><p class="text-sm mb-4">Choose a background song for the surprise!</p>
         <div class="music-library-grid mb-4" style="display: flex; justify-content: center;">
@@ -110,9 +115,9 @@
             <div id="final-photo-preview-list" class="flex-row justify-center mt-3 gap-2" style="flex-wrap: wrap; width: 100%;"></div>
         </div>
         
-        <div class="input-group mb-3"><input type="text" id="setup-final-title" placeholder="Main Title (e.g. Happy Anniversary!)" class="glass-input w-100 font-bold"></div>
-        <div class="input-group mb-3"><input type="text" id="setup-final-to" placeholder="Subtitle (e.g. My Love)" class="glass-input w-100"></div>
-        <div class="input-group mb-4"><input type="text" id="setup-final-from" placeholder="Your Name" class="glass-input w-100"></div>
+        <div class="input-group mb-3"><input type="text" id="setup-final-title" placeholder="Main Title (e.g. Happy Birthday!)" class="glass-input w-100 font-bold"></div>
+        <div class="input-group mb-3"><input type="text" id="setup-final-to" placeholder="Subtitle (e.g. To My Bestie)" class="glass-input w-100"></div>
+        <div class="input-group mb-4"><input type="text" id="setup-final-from" placeholder="Your Name (Optional)" class="glass-input w-100"></div>
         <button class="nav-btn prev-setup-btn mb-3 w-100" data-prev="setup-game">Back</button>
         <button id="finish-creator-btn" class="glow-btn w-100 mt-2">Save Everything & Finish! 🔥</button>
     </div></section>
@@ -133,32 +138,43 @@
         </div>
         
         <div id="unlock-container" class="hidden flex-center-all h-100 full-page relative w-100">
-            <h2 class="top-title-text" style="position: absolute; top: 5vh; z-index: 100;">It's his bday and that's how u surprise him💌</h2>
-            <div class="floating-hearts-bg" id="floating-hearts-bg"></div>
+            <h2 class="top-title-text">A Magical Surprise Awaits You... ✨</h2>
             
-            <div class="notebook-full-screen" style="width: 90%; max-width: 800px; height: 75vh; background: #ffffff; border-radius: 20px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; background-image: linear-gradient(90deg, rgba(200, 220, 240, 0.5) 1px, transparent 1px), linear-gradient(rgba(200, 220, 240, 0.5) 1px, transparent 1px); background-size: 20px 20px;">
-                <!-- Stickers -->
-                <div class="sticker sticker-camera"><i class="fas fa-camera"></i></div>
-                <div class="sticker sticker-rainbow"><i class="fas fa-rainbow"></i></div>
-                <div class="sticker sticker-bunny"><i class="fas fa-rabbit"></i></div>
-                <div class="sticker sticker-bunny-left"><i class="fas fa-rabbit"></i></div>
-                <div class="sticker sticker-cat"><i class="fas fa-cat"></i></div>
-                
-                <!-- Sketched Hearts -->
-                <i class="fas fa-heart heart-sketch sketch-1"></i>
-                <i class="fas fa-heart heart-sketch sketch-2"></i>
-                <i class="fas fa-heart heart-sketch sketch-3"></i>
-                <i class="fas fa-heart heart-sketch sketch-4"></i>
+            <div class="cute-card-wrapper bounce">
+                <div class="laptop-mockup">
+                    <div class="laptop-screen">
+                        <div class="browser-header">
+                            <div class="dots"><span></span><span></span><span></span></div>
+                            <div class="address-bar"></div>
+                        </div>
+                        
+                        <div class="notebook-page" style="height: calc(100% - 30px); position: relative; background: #ffffff; background-image: linear-gradient(90deg, rgba(200, 220, 240, 0.5) 1px, transparent 1px), linear-gradient(rgba(200, 220, 240, 0.5) 1px, transparent 1px); background-size: 20px 20px;">
+                            <!-- Stickers -->
+                            <div class="sticker sticker-camera"><i class="fas fa-camera"></i></div>
+                            <div class="sticker sticker-rainbow"><i class="fas fa-rainbow"></i></div>
+                            <div class="sticker sticker-bunny"><i class="fas fa-rabbit"></i></div>
+                            <div class="sticker sticker-bunny-left"><i class="fas fa-rabbit"></i></div>
+                            <div class="sticker sticker-cat"><i class="fas fa-cat"></i></div>
+                            
+                            <!-- Sketched Hearts -->
+                            <i class="fas fa-heart heart-sketch sketch-1"></i>
+                            <i class="fas fa-heart heart-sketch sketch-2"></i>
+                            <i class="fas fa-heart heart-sketch sketch-3"></i>
+                            <i class="fas fa-heart heart-sketch sketch-4"></i>
 
-                <div class="notebook-inner" style="width:100%; height:100%; border:none; box-shadow:none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0; position: relative;">
-                    <h1 id="view-reveal-title" style="position: absolute; top: 30%; width: 100%; margin: 0; pointer-events: none;">HAPPY BIRTHDAY MY LOVE</h1>
-                    <p class="sub-title-age" style="color: #b7394c; font-family: 'Patrick Hand', cursive; font-size: 1.5rem; z-index: 20; position: absolute; bottom: 15%; width: 100%; text-align: center;">Happy special birthday 💖</p>
+                            <div class="notebook-inner" style="width:100%; height:100%; border:none; box-shadow:none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0; position: relative;">
+                                <h1 id="view-reveal-title" style="position: absolute; top: 40%; transform: translateY(-50%); width: 100%; margin: 0; pointer-events: none;"></h1>
+                                <p class="sub-title-age" id="view-reveal-sub" style="color: #b7394c; font-family: 'Patrick Hand', cursive; font-size: 1.6rem; z-index: 20; position: absolute; top: 75%; transform: translateY(-50%); width: 100%; text-align: center; font-weight: bold;">Loading... 💌</p>
+                            </div>
+
+                            <div class="click-me-hint">CLICK ME</div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="click-me-hint" style="bottom: 10px; right: 10px;">CLICK ME</div>
+                <div class="laptop-bottom"></div>
             </div>
 
-            <button id="unlock-btn" class="glow-btn w-auto px-40 mt-5 z-10 bounce" style="max-width: 300px; position: relative; margin-top: 20px;">Open Your Gift ❤️</button>
+            <button id="unlock-btn" class="glow-btn w-auto px-40 mt-5 z-10 bounce" style="max-width: 300px; position: absolute; bottom: 10vh;">Open Your Gift ❤️</button>
         </div>
     </section>
     
@@ -304,6 +320,26 @@
     </section>
 
 
+    <section id="sharing-screen" class="screen hidden full-page">
+        <div class="glass-panel text-center wide-panel bounce">
+            <h2 class="section-title mb-2 text-3xl">Share Your Magic ✨</h2>
+            <p class="text-sm mb-4">Your surprise is ready to travel through the stars!</p>
+            
+            <div id="qrcode-container" class="mb-4"></div>
+            
+            <div class="input-group flex-row align-center gap-2 mb-3">
+                <input type="text" id="share-link-input" class="glass-input flex-1 text-xs" readonly>
+                <button id="copy-link-btn" class="glow-btn px-3 py-2"><i class="fas fa-copy"></i></button>
+            </div>
+            
+            <button id="preview-final-btn" class="glass-btn w-100 mb-3">
+                <i class="fas fa-eye"></i> Preview Final Experience
+            </button>
+            
+            <p class="text-xs text-muted">Send this link to the person you want to surprise! 💌</p>
+        </div>
+    </section>
+
     <!-- 📷 QR Scanner Modal -->
     <div id="scanner-modal" class="modal hidden">
         <div class="glass-panel text-center w-100 p-3" style="max-width: 90%; width: 400px; padding: 20px;">
@@ -340,6 +376,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="script.js?v=999999999"></script>
+    <script src="script.js?v=1.2"></script>
 </body>
 </html>

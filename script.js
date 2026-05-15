@@ -62,25 +62,26 @@ function init() {
     }
 }
 function renderCurvedText(container, text) {
-    container.innerHTML = '';
-    const letters = text.split('');
-    const deg = 100; // Slightly tighter arc
-    const radius = container.clientWidth * 0.45; // Dynamic radius based on width
-
+    if (!container) return;
+    const cleanText = (text || 'HAPPY BIRTHDAY').trim().toUpperCase();
     
-    letters.forEach((char, i) => {
-        const span = document.createElement('span');
-        span.innerText = char === ' ' ? '\u00A0' : char;
-        span.className = 'curved-letter';
-        
-        const angle = -deg / 2 + (deg / (letters.length - 1)) * i;
-        const x = Math.sin(angle * Math.PI / 180) * radius;
-        const y = -Math.cos(angle * Math.PI / 180) * radius; // Remove offset to center vertically
-        
-        span.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
-        container.appendChild(span);
-    });
+    // Professional SVG Method - Optimized for all browsers
+    const width = 600;
+    const height = 300;
+    container.innerHTML = `
+        <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: auto; overflow: visible; display: block;">
+            <defs>
+                <path id="rainbowPath" d="M 50,220 A 250,150 0 0 1 550,220" />
+            </defs>
+            <text fill="#4a90e2" font-family="'Patrick Hand', cursive" font-size="55" font-weight="800" style="text-shadow: 2px 2px 0px white;">
+                <textPath href="#rainbowPath" xlink:href="#rainbowPath" startOffset="50%" text-anchor="middle">
+                    ${cleanText}
+                </textPath>
+            </text>
+        </svg>
+    `;
 }
+
 
 // Memory Limit Helper
 function compressImage(dataUrl, callback) {
@@ -211,7 +212,11 @@ async function saveToCloud() {
         msg.innerHTML = "Success! Saved Forever! 🎉";
         setTimeout(() => {
             modal.classList.add('hidden');
-            generateQR(uniqueId);
+            try {
+                generateQR(uniqueId);
+            } catch (qrErr) {
+                console.error("QR Error:", qrErr);
+            }
             navigateTo('sharing');
         }, 1200);
         
@@ -337,10 +342,7 @@ function generateQR(id) {
 // ==========================================
 // 🛠️ CREATOR FLOW & WIZARD (Rest of logic)
 // ==========================================
-document.getElementById('finish-creator-btn').onclick = () => {
-    saveCurrentStepData();
-    saveToCloud();
-};
+
 
 function onScreenShow(screenId) {
     if (screenId === 'setup-music') {
@@ -479,16 +481,23 @@ function updateTimer() {
             }
         }
         
-        // Show User's Custom Title (Notebook Style with Rainbow Arch)
         const revealTitle = document.getElementById('view-reveal-title');
-        const revealSub = document.querySelector('.sub-title-age');
-        
         if (revealTitle) {
-            const text = (APP_STATE.config.final.title || 'HAPPY BIRTHDAY MY LOVE').toUpperCase();
-            renderCurvedText(revealTitle, text);
+            const renderLoop = (count) => {
+                const text = (APP_STATE.config.final.title || 'HAPPY BIRTHDAY').toUpperCase();
+                renderCurvedText(revealTitle, text);
+                // If width was 0, retry a few times as the animation finishes
+                if (revealTitle.clientWidth === 0 && count < 5) {
+                    setTimeout(() => renderLoop(count + 1), 200);
+                }
+            };
+            setTimeout(() => renderLoop(0), 600);
         }
+        
+        const revealSub = document.getElementById('view-reveal-sub');
         if (revealSub) {
-            revealSub.innerText = APP_STATE.config.final.to || 'Happy special birthday 💖';
+            // Remove subtitle from the first reveal page as requested
+            revealSub.innerText = '';
         }
         
         // Final Confetti Burst
@@ -733,8 +742,8 @@ async function setupCakeScene() {
             for (let i = 0; i < length; i++) { values += (array[i]); }
             const average = values / length;
             
-            // If blowing sound is detected (high volume low frequency)
-            if (average > 50) {
+            // If blowing sound is detected (lower threshold for easier blowing)
+            if (average > 35) {
                 blowAllCandles();
             }
         };
@@ -835,9 +844,9 @@ function fireCelebration() {
         }
     }
     
-    document.getElementById('view-final-title').innerText = APP_STATE.config.final.title || 'A VERY HAPPY BIRTHDAY BABYY';
-    document.getElementById('view-final-to').innerText = APP_STATE.config.final.to || 'My Love';
-    document.getElementById('view-final-from').innerText = APP_STATE.config.final.from || 'Your Name';
+    document.getElementById('view-final-title').innerText = APP_STATE.config.final.title || 'HAPPY BIRTHDAY!';
+    document.getElementById('view-final-to').innerText = APP_STATE.config.final.to || '';
+    document.getElementById('view-final-from').innerText = APP_STATE.config.final.from ? `From: ${APP_STATE.config.final.from}` : '';
     confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 }
 
@@ -876,28 +885,57 @@ function setupGlobalEvents() {
     document.querySelectorAll('.prev-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.prev));
     
     // 🌙 Theme Toggle
-    document.getElementById('theme-toggle').onclick = () => {
-        document.body.classList.toggle('dark-theme');
-        const icon = document.querySelector('#theme-toggle i');
-        if (document.body.classList.contains('dark-theme')) {
-            icon.className = 'fas fa-sun text-gold';
-        } else {
-            icon.className = 'fas fa-moon';
-        }
-    };
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) {
+        themeBtn.onclick = () => {
+            document.body.classList.toggle('dark-theme');
+            const icon = document.querySelector('#theme-toggle i');
+            if (document.body.classList.contains('dark-theme')) {
+                icon.className = 'fas fa-sun text-gold';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        };
+    }
     
     // 🎵 Music Toggle
-    document.getElementById('music-toggle').onclick = () => {
-        const bgMusic = document.getElementById('bg-music');
-        const icon = document.querySelector('#music-toggle i');
-        if (bgMusic.paused) {
-            bgMusic.play().catch(e => console.error(e));
-            icon.className = 'fas fa-pause text-primary';
-        } else {
-            bgMusic.pause();
-            icon.className = 'fas fa-music';
-        }
-    };
+    const musicBtn = document.getElementById('music-toggle');
+    if (musicBtn) {
+        musicBtn.onclick = () => {
+            const bgMusic = document.getElementById('bg-music');
+            const icon = document.querySelector('#music-toggle i');
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => console.error(e));
+                icon.className = 'fas fa-pause text-primary';
+            } else {
+                bgMusic.pause();
+                icon.className = 'fas fa-music';
+            }
+        };
+    }
+
+    // FINAL SCREEN: Inputs & Finish
+    const fTitle = document.getElementById('setup-final-title');
+    if (fTitle) fTitle.oninput = saveCurrentStepData;
+    
+    const fTo = document.getElementById('setup-final-to');
+    if (fTo) fTo.oninput = saveCurrentStepData;
+    
+    const fFrom = document.getElementById('setup-final-from');
+    if (fFrom) fFrom.oninput = saveCurrentStepData;
+
+    const finishBtn = document.getElementById('finish-creator-btn');
+    if (finishBtn) {
+        finishBtn.onclick = (e) => {
+            e.preventDefault();
+            finishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            finishBtn.disabled = true;
+            saveCurrentStepData();
+            saveToCloud();
+        };
+    }
+
+
     
     
     // 🌍 Share Buttons
@@ -1134,6 +1172,7 @@ function setupGlobalEvents() {
     document.querySelectorAll('.prev-setup-btn').forEach(b => b.onclick = () => navigateTo(b.dataset.prev));
 }
 
+
 function renderFinalPhotosPreview() {
     const boxList = document.getElementById('final-photo-preview-list');
     const spanText = document.getElementById('final-photo-span');
@@ -1197,16 +1236,8 @@ function renderFinalPhotosPreview() {
         imgContainer.appendChild(removeBtn);
         boxList.appendChild(imgContainer);
     });
-    // FINAL SCREEN: Inputs & Finish
-    document.getElementById('setup-final-title').oninput = saveCurrentStepData;
-    document.getElementById('setup-final-to').oninput = saveCurrentStepData;
-    document.getElementById('setup-final-from').oninput = saveCurrentStepData;
-
-    document.getElementById('finish-creator-btn').onclick = () => {
-        saveCurrentStepData();
-        saveToCloud();
-    };
 }
+
 
 
 
