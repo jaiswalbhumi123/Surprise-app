@@ -713,16 +713,51 @@ let blownCount = 0;
 
 async function setupCakeScene() {
     const area = document.getElementById('candles-area');
+    const instruction = document.getElementById('cake-instruction');
+    const tiers = document.querySelectorAll('.cake-tier');
+    
+    // Reset State
     area.innerHTML = ''; 
     blownCount = 0;
+    instruction.style.opacity = '0';
+    tiers.forEach(t => t.style.opacity = '0');
+    tiers.forEach(t => t.style.transform = 'translateY(50px) scale(0.8)');
     
-    // Add CSS Candles
-    for(let i=0; i<5; i++) {
-        const c = document.createElement('div');
-        c.className = 'candle-interactive'; 
-        c.innerHTML = '<div class="flame"></div><div class="smoke"></div>';
-        c.onclick = () => blowCandle(c);
-        area.appendChild(c);
+    // Step-by-Step Animation Sequence
+    const animateTier = (idx, delay) => {
+        setTimeout(() => {
+            tiers[idx].style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            tiers[idx].style.opacity = '1';
+            tiers[idx].style.transform = 'translateY(0) scale(1)';
+            
+            // If it's the last tier, show candles and instruction
+            if (idx === 0) { // tier-3 is the top one, which is the first in DOM usually
+                setTimeout(() => {
+                    instruction.style.opacity = '1';
+                    instruction.style.transition = 'opacity 0.5s';
+                    addCandles();
+                }, 800);
+            }
+        }, delay);
+    };
+
+    // Build from bottom up (Tier 1 is bottom, Tier 3 is top)
+    // In our HTML: tier-3 is first child, tier-1 is last.
+    animateTier(2, 500);  // Bottom
+    animateTier(1, 1200); // Middle
+    animateTier(0, 1900); // Top
+
+    function addCandles() {
+        for(let i=0; i<5; i++) {
+            const c = document.createElement('div');
+            c.className = 'candle-interactive'; 
+            c.innerHTML = '<div class="flame"></div><div class="smoke"></div>';
+            c.style.opacity = '0';
+            c.style.transition = 'opacity 0.5s';
+            c.onclick = () => blowCandle(c);
+            area.appendChild(c);
+            setTimeout(() => c.style.opacity = '1', i * 150);
+        }
     }
     
     // Start Mic detection
